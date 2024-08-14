@@ -133,7 +133,7 @@ const Comments: React.FC = () => {
           </span>
         </div>
         <button
-          className="text-sm text-blue-500 hover:underline"
+          className="absolute top-1/2 right-[-12.5px] transform -translate-y-1/2 text-sm text-blue-500 hover:underline"
           onClick={() => deleteComment(comment.id)}
         >
           <MdDelete size={24} color="black" />
