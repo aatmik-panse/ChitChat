@@ -206,7 +206,7 @@ const Comments: React.FC = () => {
         <h2 className="text-lg font-semibold mt-4">Comments</h2>
         <button
           onClick={() => setSortBy(!sortBy)}
-          className="flex flex-row align-middle"
+          className="flex flex-row align-middle mt-4"
         >
           Sort By: Date and Time{" "}
           {sortBy ? (
