@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { MdDelete } from "react-icons/md";
 import useStore from "../hooks/store";
+import { FaLongArrowAltDown } from "react-icons/fa";
+import { FaLongArrowAltUp } from "react-icons/fa";
 
 type FormValues = {
   name: string;
@@ -12,6 +14,7 @@ const Comments: React.FC = () => {
   const { comments, addComment, deleteComment, editComment } = useStore();
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<boolean>(true);
 
   const handleAddComment: SubmitHandler<FormValues> = ({ name, text }) => {
     const newComment = {
@@ -129,6 +132,12 @@ const Comments: React.FC = () => {
             {new Date(comment.date).toLocaleString()}
           </span>
         </div>
+        <button
+          className="text-sm text-blue-500 hover:underline"
+          onClick={() => deleteComment(comment.id)}
+        >
+          <MdDelete size={24} color="black" />
+        </button>
       </div>
       {editingCommentId === comment.id ? (
         <CommentForm
@@ -159,19 +168,17 @@ const Comments: React.FC = () => {
         </>
       )}
       {children}
-      <button
-        className="absolute top-1/2 right-[-12.5px] transform -translate-y-1/2 text-sm text-blue-500 hover:underline"
-        onClick={() => deleteComment(comment.id)}
-      >
-        <MdDelete size={24} color="black" />
-      </button>
     </div>
   );
 
   const renderComments = (parentId: string | null) =>
     comments
       .filter((comment) => comment.parentId === parentId)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .sort((a, b) =>
+        sortBy
+          ? new Date(b.date).getTime() - new Date(a.date).getTime()
+          : new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
       .map((comment) => (
         <Comment
           key={comment.id}
@@ -189,12 +196,26 @@ const Comments: React.FC = () => {
       ));
 
   return (
-    <div className="w-1/2 mx-auto my-8 ">
+    <div className="w-1/2 mx-auto my-8">
       <CommentForm
         type="Add Comment"
         onSubmit={handleAddComment}
         defaultValues={{ name: "", text: "" }}
       />
+      <div className="border-b my-4 flex flex-row align-middle justify-between">
+        <h2 className="text-lg font-semibold mt-4">Comments</h2>
+        <button
+          onClick={() => setSortBy(!sortBy)}
+          className="flex flex-row align-middle"
+        >
+          Sort By: Date and Time{" "}
+          {sortBy ? (
+            <FaLongArrowAltUp size={20} />
+          ) : (
+            <FaLongArrowAltDown size={20} />
+          )}
+        </button>
+      </div>
       <div className="mt-4 space-y-4">{renderComments(null)}</div>
     </div>
   );
